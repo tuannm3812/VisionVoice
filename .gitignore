@@ -1,6 +1,9 @@
 # Large data files
 data/
 models/
+*.pth
+*.pt
+*.ckpt
 
 # Python
 __pycache__/
@@ -29,3 +32,4 @@ Thumbs.db
 # Results and logs
 results/
 *.log
+kaggle/working/

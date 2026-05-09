@@ -1,168 +1,113 @@
-# VisionVoice: Image Captioning with Attention
+# VisionVoice
 
-A PyTorch implementation of an attention-based image captioning model trained on the VizWiz dataset. This project generates natural language descriptions for images using a CNN encoder and LSTM decoder with attention mechanism.
+VisionVoice is an image captioning project for the VizWiz-Captions dataset. It explores the dataset, trains a baseline ResNet-LSTM captioning model, and then refines the architecture with Bahdanau-style visual attention.
 
-## Project Overview
+The Kaggle workflow is split into three rerunnable notebooks so experimentation is easier to review, debug, and compare.
 
-VisionVoice combines:
-- **CNN Encoder**: Pretrained ResNet50/VGG16 for visual feature extraction
-- **LSTM Decoder**: Sequence-to-sequence generation with attention mechanism
-- **Attention Module**: Focus on relevant image regions during caption generation
-- **Training Pipeline**: Complete setup with validation and checkpointing
+## Notebooks
 
-## Repository Structure
+| Notebook | Purpose |
+| --- | --- |
+| `notebooks/01_eda_vizwiz.ipynb` | Dataset loading, annotation cleaning, image/caption inspection, leakage-free split, integrity audits, vocabulary and caption-length analysis. |
+| `notebooks/02_baseline_resnet_lstm.ipynb` | Baseline CNN encoder plus LSTM decoder training, validation loss tracking, BLEU evaluation, and qualitative caption inspection. |
+| `notebooks/03_attention_resnet_lstm.ipynb` | Spatial ResNet encoder, attention decoder, two-tier optimizer, BLEU evaluation, and attention heatmap visualization. |
 
-```
+## Project Structure
+
+```text
 VisionVoice/
-├── data/                      # Data storage (ignored by git)
-│   ├── images/                # VizWiz validation images
-│   └── annotations/           # VizWiz caption JSON files
-├── notebooks/                 
-│   └── exploratory_analysis.ipynb # Dataset visualization & word clouds
-├── src/                       
-│   ├── data_loader.py         # Custom Dataset class & Vocabulary builder
-│   ├── encoder.py             # CNN feature extractor (Pretrained VGG/ResNet)
-│   ├── decoder.py             # Sequence model (LSTM/RNN with Attention)
-│   ├── train.py               # Training loop and checkpointing logic
-│   └── eval.py                # BLEU score calculations & inference
-├── models/                    # Saved .pth model weights
-├── results/                   # Evaluation plots and sample captions
-├── .gitignore                 # Prevents large data/weights from being uploaded
-├── requirements.txt           # Environment dependencies
-└── README.md                  # Project overview and usage instructions
+|-- notebooks/
+|   |-- 01_eda_vizwiz.ipynb
+|   |-- 02_baseline_resnet_lstm.ipynb
+|   `-- 03_attention_resnet_lstm.ipynb
+|-- src/
+|   |-- data_loader.py
+|   |-- decoder.py
+|   |-- encoder.py
+|   |-- eval.py
+|   `-- train.py
+|-- requirements.txt
+|-- .gitignore
+`-- README.md
 ```
 
-## Installation
+Large files such as datasets, trained weights, generated outputs, and Kaggle working artifacts should stay outside git.
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/VisionVoice.git
-cd VisionVoice
+## Kaggle Setup
+
+1. Create a Kaggle notebook.
+2. Attach the VizWiz dataset used by the project.
+3. Upload or copy one of the split notebooks.
+4. Enable GPU acceleration.
+5. Run the notebooks in order:
+   - `01_eda_vizwiz.ipynb`
+   - `02_baseline_resnet_lstm.ipynb`
+   - `03_attention_resnet_lstm.ipynb`
+
+The notebooks default to this Kaggle dataset path:
+
+```text
+/kaggle/input/datasets/tuannm3823/vizwiz
 ```
 
-2. Create a virtual environment:
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+If your Kaggle dataset slug changes, set these environment variables in the first setup cell before creating `CFG`:
+
+```python
+import os
+os.environ["VIZWIZ_DATA_DIR"] = "/kaggle/input/<your-dataset-folder>"
+os.environ["VIZWIZ_ANNOTATIONS_DIR"] = "/kaggle/input/<your-dataset-folder>/annotations/annotations"
+os.environ["VIZWIZ_IMAGE_DIR"] = "/kaggle/input/<your-dataset-folder>/val/val"
 ```
 
-3. Install dependencies:
+## Local Setup
+
 ```bash
+python -m venv .venv
+.venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Dataset Setup
+For local runs, place data in:
 
-1. Download the VizWiz dataset from [VizWiz Challenge](https://vizwiz.org/)
-2. Place images in `data/images/`
-3. Place annotation JSON files in `data/annotations/`
-
-Expected annotation format:
-```json
-[
-  {
-    "image_id": "VizWiz_train_0000001.jpg",
-    "caption": "a woman wearing glasses"
-  },
-  ...
-]
+```text
+data/
+|-- annotations/
+|   `-- val.json
+`-- images/
+    `-- *.jpg
 ```
 
-## Usage
+You can also override the local data root:
 
-### Data Exploration
-
-Open the Jupyter notebook for dataset visualization:
 ```bash
-jupyter notebook notebooks/exploratory_analysis.ipynb
+set VIZWIZ_LOCAL_DATA_DIR=C:\path\to\vizwiz
 ```
 
-### Training
+## Models
 
-```python
-from src.data_loader import VizWizDataset, Vocabulary
-from src.encoder import ImageEncoder
-from src.decoder import CaptionDecoder
-from src.train import Trainer
-from torch.utils.data import DataLoader
+### Baseline
 
-# Setup
-vocab = Vocabulary()
-dataset = VizWizDataset('data/images', 'data/annotations/captions.json', vocab)
-loader = DataLoader(dataset, batch_size=32)
+- ResNet-50 encoder pretrained on ImageNet.
+- Frozen visual backbone with a learned projection layer.
+- LSTM decoder trained with teacher forcing.
+- Cross-entropy loss with padding ignored.
+- Greedy decoding for inference.
 
-# Model
-encoder = ImageEncoder('resnet50', pretrained=True)
-decoder = CaptionDecoder(len(vocab), embedding_dim=256, hidden_dim=512)
+### Attention Model
 
-# Train
-trainer = Trainer(decoder, device='cuda')
-trainer.train(loader, loader, num_epochs=10)
+- ResNet-50 spatial feature encoder.
+- Bahdanau-style additive attention over a 7x7 feature grid.
+- LSTMCell decoder conditioned on the current attention context.
+- Separate learning rates for decoder training and encoder fine-tuning.
+- Attention heatmaps for qualitative inspection.
+
+## Outputs
+
+Kaggle saves trained checkpoints to `/kaggle/working`:
+
+```text
+vision_voice_baseline_best.pth
+vision_voice_attention_best.pth
 ```
 
-### Inference
-
-```python
-from src.eval import Evaluator
-
-evaluator = Evaluator(model, vocab, device='cuda')
-caption = evaluator.generate_caption(image_features)
-print(f"Generated caption: {caption}")
-```
-
-### Evaluation
-
-```python
-results = evaluator.evaluate_dataset(test_loader)
-print(f"BLEU-4 Score: {results['avg_bleu_score']:.4f}")
-```
-
-## Model Architecture
-
-### Encoder
-- **Base Model**: ResNet-50 (pretrained on ImageNet)
-- **Output**: 2048-dimensional feature vectors
-- **Frozen Weights**: Encoder weights are frozen during training
-
-### Decoder
-- **Embedding Layer**: Word embeddings (256 dimensions)
-- **LSTM**: 512-dimensional hidden state
-- **Attention**: Computes attention weights over image features
-- **Output**: Vocabulary-sized logits for next word prediction
-
-## Training Details
-
-- **Optimizer**: Adam (lr=0.001)
-- **Loss**: Cross-entropy with padding ignored
-- **Batch Size**: 32
-- **Max Caption Length**: 15 words
-- **Vocabulary**: Built with minimum frequency threshold of 5
-
-## Results
-
-Evaluation metrics are saved in `results/` directory:
-- BLEU-1, BLEU-2, BLEU-3, BLEU-4 scores
-- Sample captions on validation set
-- Training loss curves
-
-## Future Improvements
-
-- Implement beam search for caption generation
-- Add visual attention visualization
-- Experiment with Transformer-based decoder
-- Support for multi-language captions
-- Fine-tune encoder weights on VizWiz data
-
-## References
-
-- Show, Attend and Tell: Neural Image Caption Generation with Visual Attention
-- VizWiz Challenge Dataset
-- PyTorch Documentation
-
-## License
-
-This project is provided as-is for educational and research purposes.
-
-## Contact
-
-For questions or contributions, please open an issue or submit a pull request.
+These files are intentionally ignored by git.
