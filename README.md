@@ -44,19 +44,13 @@ Large files such as datasets, trained weights, generated outputs, and Kaggle wor
    - `02_baseline_resnet_lstm.ipynb`
    - `03_attention_resnet_lstm.ipynb`
 
-The notebooks auto-detect the attached Kaggle dataset by looking for:
+The notebooks default to this Kaggle dataset path:
 
 ```text
-/kaggle/input/<dataset-slug>/annotations/annotations/val.json
+/kaggle/input/datasets/tuannm3823/vizwiz
 ```
 
-For your current Kaggle input, this should resolve to:
-
-```text
-/kaggle/input/vizwiz/annotations/annotations/val.json
-```
-
-If your Kaggle dataset slug changes or you want to force a path manually, set these environment variables in the first setup cell before creating `CFG`:
+If your Kaggle dataset slug changes, set these environment variables in the first setup cell before creating `CFG`:
 
 ```python
 import os
