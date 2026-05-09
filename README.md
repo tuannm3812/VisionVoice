@@ -8,7 +8,7 @@ The Kaggle workflow is split into three rerunnable notebooks so experimentation 
 
 | Notebook | Purpose |
 | --- | --- |
-| `notebooks/01_eda_vizwiz.ipynb` | Dataset loading, annotation cleaning, image/caption inspection, leakage-free split, integrity audits, vocabulary and caption-length analysis. |
+| `notebooks/01_eda_vizwiz.ipynb` | Dataset loading, annotation cleaning, image/caption inspection, leakage-free split, integrity audits, cleaning-impact analysis, vocabulary coverage, and caption-length analysis. |
 | `notebooks/02_baseline_resnet_lstm.ipynb` | Baseline CNN encoder plus LSTM decoder training, validation loss tracking, BLEU evaluation, and qualitative caption inspection. |
 | `notebooks/03_attention_resnet_lstm.ipynb` | Spatial ResNet encoder, attention decoder, two-tier optimizer, BLEU evaluation, and attention heatmap visualization. |
 

@@ -7,6 +7,8 @@ Run these notebooks in order when reproducing the Kaggle workflow:
    - Audits noisy captions and dataset quality flags.
    - Builds clean train/validation splits.
    - Checks split structure and image file integrity.
+   - Quantifies cleaning impact, orphaned images, and reference-caption coverage.
+   - Checks vocabulary coverage, validation OOV rate, and sequence truncation risk.
    - Studies vocabulary and caption length distributions.
 
 2. `02_baseline_resnet_lstm.ipynb`
