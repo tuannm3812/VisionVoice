@@ -22,3 +22,15 @@ Run these notebooks in order when reproducing the Kaggle workflow:
    - Evaluates BLEU and visualizes attention maps.
 
 Each notebook is standalone for Kaggle, so it repeats the setup and data-preparation cells it needs.
+
+Mode defaults:
+
+- `01_eda_vizwiz.ipynb`: `MODE = "eda"` and `SHOW_PLOTS = True`
+- `02_baseline_resnet_lstm.ipynb`: `MODE = "train"` and `SHOW_PLOTS = False`
+- `03_attention_resnet_lstm.ipynb`: `MODE = "train"` and `SHOW_PLOTS = False`
+
+Clear notebook outputs before pushing Kaggle-run notebooks to GitHub. Plotly figures and rendered images are saved inside `.ipynb` output cells and can easily make a notebook too large:
+
+```bash
+jupyter nbconvert --clear-output --inplace notebooks/*.ipynb
+```
