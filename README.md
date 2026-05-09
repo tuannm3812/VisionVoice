@@ -69,7 +69,7 @@ SHOW_PLOTS = MODE == "eda"
 
 The training notebooks keep `SHOW_PLOTS` off by default so Kaggle runs focus on training/evaluation and do not save heavy plot outputs into the notebook.
 
-Before pushing notebooks after a Kaggle run, clear outputs first. Plotly and image displays are stored inside `.ipynb` files and can make them too large for GitHub:
+Before pushing notebooks after a Kaggle run, clear outputs first. Even lightweight static figures and image displays are stored inside `.ipynb` files and can make notebooks unnecessarily large:
 
 ```bash
 jupyter nbconvert --clear-output --inplace notebooks/*.ipynb

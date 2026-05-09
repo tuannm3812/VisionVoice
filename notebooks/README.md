@@ -29,7 +29,7 @@ Mode defaults:
 - `02_baseline_resnet_lstm.ipynb`: `MODE = "train"` and `SHOW_PLOTS = False`
 - `03_attention_resnet_lstm.ipynb`: `MODE = "train"` and `SHOW_PLOTS = False`
 
-Clear notebook outputs before pushing Kaggle-run notebooks to GitHub. Plotly figures and rendered images are saved inside `.ipynb` output cells and can easily make a notebook too large:
+Clear notebook outputs before pushing Kaggle-run notebooks to GitHub. Static figures and rendered images are saved inside `.ipynb` output cells and can easily make a notebook too large:
 
 ```bash
 jupyter nbconvert --clear-output --inplace notebooks/*.ipynb
