@@ -64,10 +64,11 @@ Each notebook has a mode switch in `Settings`:
 ```python
 MODE = "eda"      # EDA notebook
 MODE = "train"    # baseline and attention notebooks
-SHOW_PLOTS = MODE == "eda"
+SHOW_EDA_PLOTS = MODE == "eda"
+SHOW_MODEL_PLOTS = MODE in {"train", "inference"}
 ```
 
-The training notebooks keep `SHOW_PLOTS` off by default so Kaggle runs focus on training/evaluation and do not save heavy plot outputs into the notebook.
+The training notebooks keep EDA plots off by default but keep post-training diagnostics on, so you still get loss curves, qualitative caption checks, and attention visualizations.
 
 Before pushing notebooks after a Kaggle run, clear outputs first. Even lightweight static figures and image displays are stored inside `.ipynb` files and can make notebooks unnecessarily large:
 

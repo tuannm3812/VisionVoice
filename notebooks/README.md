@@ -27,9 +27,9 @@ Each notebook is standalone for Kaggle, so it repeats the setup and data-prepara
 
 Mode defaults:
 
-- `01_eda_vizwiz.ipynb`: `MODE = "eda"` and `SHOW_PLOTS = True`
-- `02_baseline_resnet_lstm.ipynb`: `MODE = "train"` and `SHOW_PLOTS = False`
-- `03_attention_resnet_lstm.ipynb`: `MODE = "train"` and `SHOW_PLOTS = False`
+- `01_eda_vizwiz.ipynb`: `MODE = "eda"`, `SHOW_EDA_PLOTS = True`, `SHOW_MODEL_PLOTS = False`
+- `02_baseline_resnet_lstm.ipynb`: `MODE = "train"`, `SHOW_EDA_PLOTS = False`, `SHOW_MODEL_PLOTS = True`
+- `03_attention_resnet_lstm.ipynb`: `MODE = "train"`, `SHOW_EDA_PLOTS = False`, `SHOW_MODEL_PLOTS = True`
 
 Clear notebook outputs before pushing Kaggle-run notebooks to GitHub. Static figures and rendered images are saved inside `.ipynb` output cells and can easily make a notebook too large:
 
