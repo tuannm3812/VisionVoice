@@ -83,30 +83,82 @@ The BLEU scores reflect this mixed behavior. BLEU-1 is reasonable because generi
 
 ## Attention Model
 
-The attention checkpoint exists and is larger than the baseline checkpoint, which is expected because the attention model keeps spatial ResNet features and adds attention-specific decoder layers. The local attention notebook currently has no saved Kaggle outputs, so attention training losses, BLEU scores, and qualitative predictions should be added after the executed notebook is pulled or exported with outputs.
+Architecture:
 
-Expected role of the attention model:
+- ResNet-50 spatial feature encoder
+- Bahdanau-style additive attention over image regions
+- LSTMCell decoder conditioned on attended visual context
+- Two-tier optimizer with a higher decoder learning rate than encoder fine-tuning rate
 
-- Improve visual grounding by conditioning each generated token on spatial image regions.
-- Reduce baseline template repetition.
-- Provide attention maps for qualitative debugging.
+Training history:
+
+| Epoch | Train loss | Validation loss |
+| ---: | ---: | ---: |
+| 1 | 5.0840 | 4.4278 |
+| 2 | 4.3909 | 4.0953 |
+| 3 | 4.0947 | 3.9054 |
+| 4 | 3.8850 | 3.7691 |
+| 5 | 3.7231 | 3.6751 |
+| 6 | 3.5893 | 3.6150 |
+| 7 | 3.4715 | 3.5617 |
+| 8 | 3.3642 | 3.5189 |
+| 9 | 3.2695 | 3.4822 |
+| 10 | 3.1824 | 3.4591 |
+
+BLEU evaluation on 500 validation images:
+
+| Metric | Score |
+| --- | ---: |
+| BLEU-1 | 0.5792 |
+| BLEU-4 | 0.1430 |
+
+### Attention Interpretation
+
+The attention model's validation loss is slightly higher than the baseline's final validation loss, but its sequence-level BLEU-4 is much stronger. This suggests the attention model may not optimize token-level cross-entropy quite as well, but it produces captions with better phrase-level overlap and visual grounding.
+
+The qualitative examples support this interpretation:
+
+| Image | Baseline prediction | Attention prediction | Grounding assessment |
+| --- | --- | --- | --- |
+| `VizWiz_val_00007740.jpg` | `A white and black box of coffee is on a table ..` | `A person is holding a small dollar bill ..` | Attention correctly identifies the dollar bill and hand-held context. |
+| `VizWiz_val_00001635.jpg` | `A white and black box of coffee is on a table ..` | `A box of frozen food with a picture of a food ..` | Attention captures the boxed-food object, though the wording remains generic. |
+
+The attention heatmaps are also useful for debugging because they expose where the model looks while generating each word. This makes the model easier to diagnose than the baseline decoder, which only emits a caption.
+
+## Model Comparison
+
+| Model | Final train loss | Final validation loss | BLEU-1 | BLEU-4 | Qualitative behavior |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Baseline ResNet-LSTM | 3.1877 | 3.4228 | 0.5750 | 0.0575 | Collapses to a repeated generic caption on inspected samples. |
+| Attention ResNet-LSTM | 3.1824 | 3.4591 | 0.5792 | 0.1430 | Produces more image-specific captions and fixes the baseline's inspected template collapse. |
+
+Key comparison:
+
+- BLEU-1 is almost unchanged: attention improves from 0.5750 to 0.5792.
+- BLEU-4 improves substantially: attention improves from 0.0575 to 0.1430.
+- The attention model has a slightly worse final validation loss, but better n-gram sequence quality and much better qualitative grounding.
+
+The attention model should be treated as the stronger model for this project because it solves the most important observed baseline failure: repeated, weakly grounded generic captions.
 
 ## Recommendations
 
 1. Keep the baseline as the documented reference model.
    It trains successfully and provides a useful lower bound, but qualitative outputs show it is not production-quality.
 
-2. Prioritize attention-model evaluation.
-   The baseline's repeated caption template is exactly the kind of failure attention is meant to address. The next comparison should report attention train/validation loss, BLEU-1 to BLEU-4, and side-by-side qualitative examples.
+2. Use the attention model as the main result.
+   The attention model improves BLEU-4 and produces visibly better grounded captions on inspected samples.
 
-3. Add beam search after the attention run is validated.
+3. Report BLEU-2 and BLEU-3 for the attention model.
+   The current attention notebook prints BLEU-1 and BLEU-4 only. For a complete comparison, update it to print BLEU-1, BLEU-2, BLEU-3, and BLEU-4 just like the baseline notebook.
+
+4. Add beam search after the attention run is validated.
    Greedy decoding can amplify generic-token choices. Beam search with a small beam size, such as 3 or 5, may improve sentence-level fluency and BLEU-4.
 
-4. Add repetition controls in decoding.
+5. Add repetition controls in decoding.
    If repeated templates remain, apply simple inference-time penalties for repeated tokens or repeated n-grams.
 
-5. Save structured metrics during training.
+6. Save structured metrics during training.
    Future notebook runs should write a small JSON or CSV metrics file to `/kaggle/working`, for example `baseline_metrics.json` and `attention_metrics.json`. This makes result comparison easier without relying on notebook output cells.
 
-6. Keep clearing notebook outputs before committing.
+7. Keep clearing notebook outputs before committing.
    Model checkpoints and rendered notebook outputs should stay out of git. Commit lightweight notebooks and markdown result summaries instead.
