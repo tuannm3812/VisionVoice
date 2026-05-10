@@ -16,6 +16,8 @@ Both model notebooks use the cleaned VizWiz validation split as a project datase
 - Epochs: 10
 - Device observed in baseline run: CUDA
 
+Note: these are validation-set results from an internal split of the annotated VizWiz validation data. If the assignment requires a separate final test split, reserve one by image file name before training and report final metrics on that untouched holdout.
+
 ## Artifacts
 
 The trained checkpoints are not committed to git because model weights are large binary artifacts.
@@ -148,8 +150,8 @@ The attention model should be treated as the stronger model for this project bec
 2. Use the attention model as the main result.
    The attention model improves BLEU-4 and produces visibly better grounded captions on inspected samples.
 
-3. Report BLEU-2 and BLEU-3 for the attention model.
-   The current attention notebook prints BLEU-1 and BLEU-4 only. For a complete comparison, update it to print BLEU-1, BLEU-2, BLEU-3, and BLEU-4 just like the baseline notebook.
+3. Rerun attention evaluation after the notebook update.
+   The attention notebook now reports BLEU-1 through BLEU-4 and saves `attention_metrics_<strategy>.json`. Rerun it on Kaggle to refresh this document with BLEU-2 and BLEU-3.
 
 4. Add beam search after the attention run is validated.
    Greedy decoding can amplify generic-token choices. Beam search with a small beam size, such as 3 or 5, may improve sentence-level fluency and BLEU-4.

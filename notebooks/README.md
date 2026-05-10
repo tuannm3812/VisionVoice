@@ -21,13 +21,20 @@ Run these notebooks in order when reproducing the Kaggle workflow:
    - Recreates the cleaned data pipeline.
    - Trains the attention-based ResNet-50 plus LSTMCell decoder.
    - Saves `vision_voice_attention_best.pth`.
-   - Evaluates BLEU and visualizes attention maps.
+   - Evaluates BLEU-1 through BLEU-4 and visualizes attention maps.
+
+Assignment submission notebook:
+
+- `02_individual_models_resnet_lstm_attention.ipynb`
+  - Contains the shared data preparation, Model 1 baseline, Model 2 attention refinement, and evaluation for both architectures in one notebook.
+  - Use this notebook when the requirement is that each student's notebook contain at least two architectures.
 
 Each notebook is standalone for Kaggle, so it repeats the setup and data-preparation cells it needs.
 
 Mode defaults:
 
 - `01_eda_vizwiz.ipynb`: `MODE = "eda"`, `SHOW_EDA_PLOTS = True`, `SHOW_MODEL_PLOTS = False`
+- `02_individual_models_resnet_lstm_attention.ipynb`: `MODE = "train"`, `SHOW_EDA_PLOTS = False`, `SHOW_MODEL_PLOTS = True`
 - `02_baseline_resnet_lstm.ipynb`: `MODE = "train"`, `SHOW_EDA_PLOTS = False`, `SHOW_MODEL_PLOTS = True`
 - `03_attention_resnet_lstm.ipynb`: `MODE = "train"`, `SHOW_EDA_PLOTS = False`, `SHOW_MODEL_PLOTS = True`
 
