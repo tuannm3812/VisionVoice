@@ -4,6 +4,8 @@ VisionVoice is an image captioning project for the VizWiz-Captions dataset. It e
 
 The Kaggle workflow is split into three rerunnable notebooks so experimentation is easier to review, debug, and compare.
 
+The assignment uses only the official VizWiz-Captions validation set. Inside that source dataset, the notebooks create internal image-level train/validation/test splits for model training, checkpoint selection, and final reporting.
+
 ## Notebooks
 
 | Notebook | Purpose |

@@ -5,7 +5,7 @@ Run these notebooks in order when reproducing the Kaggle workflow:
 1. `01_eda_vizwiz.ipynb`
    - Loads VizWiz annotations and images.
    - Audits noisy captions and dataset quality flags.
-   - Builds clean train/validation splits.
+   - Builds clean internal train/validation/test splits from the official VizWiz validation set.
    - Checks split structure and image file integrity.
    - Quantifies cleaning impact, orphaned images, and reference-caption coverage.
    - Checks vocabulary coverage, validation OOV rate, and sequence truncation risk.
@@ -15,13 +15,13 @@ Run these notebooks in order when reproducing the Kaggle workflow:
    - Recreates the cleaned data pipeline.
    - Trains the baseline ResNet-50 encoder and LSTM decoder.
    - Saves `vision_voice_baseline_best.pth`.
-   - Evaluates BLEU and shows sample predictions.
+   - Selects checkpoints on the internal validation split, then evaluates BLEU and sample predictions on the internal test split.
 
 3. `03_attention_resnet_lstm.ipynb`
    - Recreates the cleaned data pipeline.
    - Trains the attention-based ResNet-50 plus LSTMCell decoder.
    - Saves `vision_voice_attention_best.pth`.
-   - Evaluates BLEU-1 through BLEU-4 and visualizes attention maps.
+   - Selects checkpoints on the internal validation split, then evaluates BLEU-1 through BLEU-4 and visualizes attention maps on the internal test split.
 
 Assignment submission notebook:
 

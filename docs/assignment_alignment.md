@@ -13,16 +13,18 @@ Coverage:
 - Load VizWiz annotations and images.
 - Clean rejected and precanned captions.
 - Remove orphaned images after filtering.
-- Create leakage-free train/validation splits by image file name.
+- Create leakage-free internal train/validation/test splits by image file name.
 - Build the vocabulary from training captions only.
 - Audit image-file integrity.
 - Analyze reference-caption coverage, vocabulary coverage, and sequence-length risk.
 
 Current split note:
 
-- The available project data is the annotated VizWiz validation split, so the notebooks create an internal train/validation split from that annotated data.
-- If a strict train/validation/test split is required by marking criteria, reserve an additional image-level holdout from `clean_corpus_df` and report final metrics only on that untouched test split.
-- The current BLEU results should therefore be described as validation-set results, not final hidden-test results.
+- The assignment requires using only the official VizWiz-Captions validation set with 7,750 images.
+- Within that official validation set, the notebooks create internal image-level splits: 80% train, 10% validation, and 10% test after cleaning.
+- The internal validation split is used for loss monitoring and checkpoint selection.
+- The internal test split is reserved for final BLEU reporting and visual inspection.
+- These are internal experimental splits, not the official hidden VizWiz challenge test set.
 
 ## Phase 2 - Individual Architecture (Model 1)
 

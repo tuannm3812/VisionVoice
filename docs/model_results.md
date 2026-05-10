@@ -9,14 +9,13 @@ Both model notebooks use the cleaned VizWiz validation split as a project datase
 - Raw annotations: 38,750
 - Clean annotations after filtering rejected/precanned captions: 33,145
 - Usable images after filtering: 7,542
-- Train split: 6,033 images / 26,474 captions
-- Validation split: 1,509 images / 6,671 captions
+- Previous run split: 80% internal train and 20% internal validation
 - Vocabulary size used by model notebooks: 6,439 tokens including special tokens
 - Batch size: 32
 - Epochs: 10
 - Device observed in baseline run: CUDA
 
-Note: these are validation-set results from an internal split of the annotated VizWiz validation data. If the assignment requires a separate final test split, reserve one by image file name before training and report final metrics on that untouched holdout.
+Note: the assignment requires using only the official VizWiz-Captions validation set. The notebooks now create internal 80/10/10 train/validation/test splits from that official validation set. The historical metrics below came from the earlier 80/20 train/validation run, so rerun the notebooks to refresh final test-set BLEU scores.
 
 ## Artifacts
 
