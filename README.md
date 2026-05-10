@@ -128,3 +128,9 @@ vision_voice_attention_best.pth
 ```
 
 These files are intentionally ignored by git.
+
+Current training results and recommendations are documented in:
+
+```text
+docs/model_results.md
+```
