@@ -2,9 +2,20 @@
 
 VisionVoice is an image captioning project for the VizWiz-Captions dataset. It explores the dataset, trains a baseline ResNet-LSTM captioning model, and then refines the architecture with Bahdanau-style visual attention.
 
-The Kaggle workflow is split into three rerunnable notebooks so experimentation is easier to review, debug, and compare.
+The Kaggle workflow is organized around two rerunnable notebooks: one shared EDA/data-preparation notebook and one modelling notebook containing both required architectures.
 
 The assignment uses only the official VizWiz-Captions validation set. Inside that source dataset, the notebooks create internal image-level train/validation/test splits for model training, checkpoint selection, and final reporting.
+
+## Current Results
+
+The latest Kaggle run in `notebooks/02_modeling.ipynb` evaluates both models on 500 sampled images from the internal test split.
+
+| Model | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 | Key takeaway |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Baseline ResNet-LSTM | 0.5722 | 0.2712 | 0.1329 | 0.0670 | Trains stably but collapses to repeated generic captions in visual inspection. |
+| Attention ResNet-LSTM | 0.6159 | 0.3970 | 0.2502 | 0.1552 | Improves all BLEU scores and produces more image-specific captions, though repetition remains. |
+
+The attention model is the stronger current result because it substantially improves phrase-level overlap, especially BLEU-4, and directly addresses the baseline's weak visual grounding.
 
 ## Notebooks
 
@@ -20,6 +31,8 @@ VisionVoice/
 |-- notebooks/
 |   |-- 01_eda_vizwiz.ipynb
 |   `-- 02_modeling.ipynb
+|-- report/
+|   `-- visionvoice_report.md
 |-- src/
 |   |-- data_loader.py
 |   |-- decoder.py
@@ -69,7 +82,7 @@ SHOW_MODEL_PLOTS = MODE in {"train", "inference"}
 
 The training notebooks keep EDA plots off by default but keep post-training diagnostics on, so you still get loss curves, qualitative caption checks, and attention visualizations.
 
-Before pushing notebooks after a Kaggle run, clear outputs first. Even lightweight static figures and image displays are stored inside `.ipynb` files and can make notebooks unnecessarily large:
+For routine development commits, clear notebook outputs before pushing. For the final assignment submission, keep the executed notebook outputs because the brief asks for notebooks with cell outputs. Even lightweight static figures and image displays are stored inside `.ipynb` files and can make notebooks large:
 
 ```bash
 jupyter nbconvert --clear-output --inplace notebooks/*.ipynb
@@ -132,6 +145,7 @@ Current training results and recommendations are documented in:
 
 ```text
 docs/model_results.md
+report/visionvoice_report.md
 ```
 
 Assignment phase mapping is documented in:

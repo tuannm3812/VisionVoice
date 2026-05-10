@@ -1,39 +1,44 @@
 # VisionVoice Model Results
 
-This document summarizes the Kaggle training artifacts and observed notebook outputs for the current VisionVoice experiments.
+This document summarizes the executed Kaggle outputs currently stored in `notebooks/02_modeling.ipynb`.
 
-## Dataset and Run Setup
+## Run Setup
 
-Both model notebooks use the cleaned VizWiz validation split as a project dataset:
+| Item | Value |
+| --- | --- |
+| Runtime | Kaggle |
+| Python | 3.12.12 |
+| PyTorch | 2.10.0+cu128 |
+| Device | CUDA |
+| Source dataset | Official VizWiz-Captions validation set |
+| Dataset path | `/kaggle/input/datasets/tuannm3823/vizwiz` |
+| Evaluation sample | 500 images from the internal test split |
 
-- Raw annotations: 38,750
-- Clean annotations after filtering rejected/precanned captions: 33,145
-- Usable images after filtering: 7,542
-- Previous run split: 80% internal train and 20% internal validation
-- Vocabulary size used by model notebooks: 6,439 tokens including special tokens
-- Batch size: 32
-- Epochs: 10
-- Device observed in baseline run: CUDA
+The project uses only the official VizWiz validation set. The notebook creates internal image-level splits for training, checkpoint selection, and final reporting.
 
-Note: the assignment requires using only the official VizWiz-Captions validation set. The notebooks now create internal 80/10/10 train/validation/test splits from that official validation set. The historical metrics below came from the earlier 80/20 train/validation run, so rerun the notebooks to refresh final test-set BLEU scores.
+## Prepared Dataset
 
-## Artifacts
+| Item | Count |
+| --- | ---: |
+| Raw annotations | 38,750 |
+| Clean/descriptive captions | 33,145 |
+| Precanned-only captions | 4,641 |
+| Rejected-only captions | 438 |
+| Both precanned and rejected | 526 |
+| Usable images after cleaning | 7,542 |
+| Train split | 6,033 images / 26,474 captions |
+| Validation split | 754 images / 3,310 captions |
+| Test split | 755 images / 3,361 captions |
+| Vocabulary size | 6,439 tokens |
 
-The trained checkpoints are not committed to git because model weights are large binary artifacts.
-
-| Artifact | Local file | Size | SHA256 |
-| --- | --- | ---: | --- |
-| Baseline ResNet-LSTM | `vision_voice_baseline_best.pth` | 116.90 MB | `086D9FDBC629742D7D13EA80E7BDFA0DCC8580C874FF77EEF29B973447436906` |
-| Attention ResNet-LSTM | `vision_voice_attention_best.pth` | 143.91 MB | `1234340BFBD65FE209672A961A2235C51A8E88779EFAD48E2CA0BB4BF59664BB` |
-
-## Baseline Model
+## Baseline ResNet-LSTM
 
 Architecture:
 
-- Frozen pretrained ResNet-50 visual backbone
-- Learned image-feature projection
-- LSTM decoder with teacher forcing
-- Greedy decoding during inference
+- Frozen ImageNet-pretrained ResNet-50 encoder.
+- Learned projection from global CNN features to the decoder embedding space.
+- LSTM decoder trained with teacher forcing.
+- Greedy decoding at inference time.
 
 Parameter audit:
 
@@ -48,118 +53,89 @@ Training history:
 
 | Epoch | Train loss | Validation loss |
 | ---: | ---: | ---: |
-| 1 | 5.0863 | 4.3844 |
-| 2 | 4.2951 | 4.0659 |
-| 3 | 4.0298 | 3.8832 |
+| 1 | 5.0863 | 4.3872 |
+| 2 | 4.2951 | 4.0668 |
+| 3 | 4.0298 | 3.8838 |
 | 4 | 3.8421 | 3.7551 |
-| 5 | 3.6921 | 3.6597 |
-| 6 | 3.5665 | 3.5882 |
-| 7 | 3.4574 | 3.5258 |
-| 8 | 3.3579 | 3.4834 |
-| 9 | 3.2693 | 3.4506 |
-| 10 | 3.1877 | 3.4228 |
+| 5 | 3.6921 | 3.6617 |
+| 6 | 3.5665 | 3.5904 |
+| 7 | 3.4574 | 3.5282 |
+| 8 | 3.3579 | 3.4836 |
+| 9 | 3.2693 | 3.4530 |
+| 10 | 3.1877 | 3.4259 |
 
-BLEU evaluation on 500 validation images:
+BLEU results:
 
 | Metric | Score |
 | --- | ---: |
-| BLEU-1 | 0.5750 |
-| BLEU-2 | 0.2629 |
-| BLEU-3 | 0.1206 |
-| BLEU-4 | 0.0575 |
+| BLEU-1 | 0.5722 |
+| BLEU-2 | 0.2712 |
+| BLEU-3 | 0.1329 |
+| BLEU-4 | 0.0670 |
 
-### Baseline Interpretation
+Qualitative finding:
 
-The baseline loss curve is healthy: training and validation losses both decrease across all 10 epochs, with no early plateau. The gap between train loss and validation loss remains moderate, suggesting the model is learning useful dataset structure rather than immediately overfitting.
-
-However, qualitative inspection exposes a major limitation. The baseline repeatedly generated the same high-frequency template:
+The baseline repeatedly generated the same caption for unrelated images:
 
 ```text
 A white and black box of coffee is on a table ..
 ```
 
-This prediction appeared for unrelated samples including a dollar bill, a boxed food item, and a green aerosol can. This is a classic captioning failure mode: the decoder learns a fluent, frequent caption prior but does not ground individual words strongly enough in the image.
+This occurred for a 7-Up bottle, a dog, and floral fabric. The model learned a plausible language template but did not ground the caption reliably in the image.
 
-The BLEU scores reflect this mixed behavior. BLEU-1 is reasonable because generic words such as articles, colors, and common objects overlap often, but BLEU-4 is low because full generated phrases do not match the references reliably.
-
-## Attention Model
+## Attention ResNet-LSTM
 
 Architecture:
 
-- ResNet-50 spatial feature encoder
-- Bahdanau-style additive attention over image regions
-- LSTMCell decoder conditioned on attended visual context
-- Two-tier optimizer with a higher decoder learning rate than encoder fine-tuning rate
+- ResNet-50 spatial feature encoder.
+- Bahdanau-style additive attention over image regions.
+- LSTMCell decoder conditioned on the attended visual context.
+- Decoder learning rate of `1e-4` and encoder fine-tuning learning rate of `1e-5`.
+- Greedy decoding, with attention heatmaps for inspection.
 
 Training history:
 
 | Epoch | Train loss | Validation loss |
 | ---: | ---: | ---: |
-| 1 | 5.0840 | 4.4278 |
-| 2 | 4.3909 | 4.0953 |
-| 3 | 4.0947 | 3.9054 |
-| 4 | 3.8850 | 3.7691 |
-| 5 | 3.7231 | 3.6751 |
-| 6 | 3.5893 | 3.6150 |
-| 7 | 3.4715 | 3.5617 |
-| 8 | 3.3642 | 3.5189 |
-| 9 | 3.2695 | 3.4822 |
-| 10 | 3.1824 | 3.4591 |
+| 1 | 5.0891 | 4.4299 |
+| 2 | 4.3879 | 4.1053 |
+| 3 | 4.1006 | 3.9151 |
+| 4 | 3.8950 | 3.7885 |
+| 5 | 3.7355 | 3.6981 |
+| 6 | 3.6007 | 3.6279 |
+| 7 | 3.4822 | 3.5743 |
+| 8 | 3.3785 | 3.5316 |
+| 9 | 3.2821 | 3.5033 |
+| 10 | 3.1958 | 3.4695 |
 
-BLEU evaluation on 500 validation images:
+BLEU results:
 
 | Metric | Score |
 | --- | ---: |
-| BLEU-1 | 0.5792 |
-| BLEU-4 | 0.1430 |
+| BLEU-1 | 0.6159 |
+| BLEU-2 | 0.3970 |
+| BLEU-3 | 0.2502 |
+| BLEU-4 | 0.1552 |
 
-### Attention Interpretation
+Qualitative finding:
 
-The attention model's validation loss is slightly higher than the baseline's final validation loss, but its sequence-level BLEU-4 is much stronger. This suggests the attention model may not optimize token-level cross-entropy quite as well, but it produces captions with better phrase-level overlap and visual grounding.
+The attention model produced more image-specific captions than the baseline, but it still made visible errors. It partially captured clothing/person context in one example and correctly identified chairs in another, while still showing repetition and occasional object-detail mistakes.
 
-The qualitative examples support this interpretation:
+## Comparison
 
-| Image | Baseline prediction | Attention prediction | Grounding assessment |
-| --- | --- | --- | --- |
-| `VizWiz_val_00007740.jpg` | `A white and black box of coffee is on a table ..` | `A person is holding a small dollar bill ..` | Attention correctly identifies the dollar bill and hand-held context. |
-| `VizWiz_val_00001635.jpg` | `A white and black box of coffee is on a table ..` | `A box of frozen food with a picture of a food ..` | Attention captures the boxed-food object, though the wording remains generic. |
+| Model | Final train loss | Final validation loss | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| Baseline ResNet-LSTM | 3.1877 | 3.4259 | 0.5722 | 0.2712 | 0.1329 | 0.0670 |
+| Attention ResNet-LSTM | 3.1958 | 3.4695 | 0.6159 | 0.3970 | 0.2502 | 0.1552 |
+| Difference (attention - baseline) | +0.0081 | +0.0436 | +0.0437 | +0.1258 | +0.1173 | +0.0882 |
 
-The attention heatmaps are also useful for debugging because they expose where the model looks while generating each word. This makes the model easier to diagnose than the baseline decoder, which only emits a caption.
-
-## Model Comparison
-
-| Model | Final train loss | Final validation loss | BLEU-1 | BLEU-4 | Qualitative behavior |
-| --- | ---: | ---: | ---: | ---: | --- |
-| Baseline ResNet-LSTM | 3.1877 | 3.4228 | 0.5750 | 0.0575 | Collapses to a repeated generic caption on inspected samples. |
-| Attention ResNet-LSTM | 3.1824 | 3.4591 | 0.5792 | 0.1430 | Produces more image-specific captions and fixes the baseline's inspected template collapse. |
-
-Key comparison:
-
-- BLEU-1 is almost unchanged: attention improves from 0.5750 to 0.5792.
-- BLEU-4 improves substantially: attention improves from 0.0575 to 0.1430.
-- The attention model has a slightly worse final validation loss, but better n-gram sequence quality and much better qualitative grounding.
-
-The attention model should be treated as the stronger model for this project because it solves the most important observed baseline failure: repeated, weakly grounded generic captions.
+The baseline has slightly lower final validation loss, but the attention model has better BLEU scores across all n-gram levels. This matters because validation loss is token-level, while BLEU better reflects sequence-level caption overlap with references. The BLEU-4 improvement is especially important because it suggests stronger phrase-level caption quality.
 
 ## Recommendations
 
-1. Keep the baseline as the documented reference model.
-   It trains successfully and provides a useful lower bound, but qualitative outputs show it is not production-quality.
-
-2. Use the attention model as the main result.
-   The attention model improves BLEU-4 and produces visibly better grounded captions on inspected samples.
-
-3. Rerun attention evaluation after the notebook update.
-   The attention notebook now reports BLEU-1 through BLEU-4 and saves `attention_metrics_<strategy>.json`. Rerun it on Kaggle to refresh this document with BLEU-2 and BLEU-3.
-
-4. Add beam search after the attention run is validated.
-   Greedy decoding can amplify generic-token choices. Beam search with a small beam size, such as 3 or 5, may improve sentence-level fluency and BLEU-4.
-
-5. Add repetition controls in decoding.
-   If repeated templates remain, apply simple inference-time penalties for repeated tokens or repeated n-grams.
-
-6. Save structured metrics during training.
-   Future notebook runs should write a small JSON or CSV metrics file to `/kaggle/working`, for example `baseline_metrics.json` and `attention_metrics.json`. This makes result comparison easier without relying on notebook output cells.
-
-7. Keep clearing notebook outputs before committing.
-   Model checkpoints and rendered notebook outputs should stay out of git. Commit lightweight notebooks and markdown result summaries instead.
+- Treat the attention model as the stronger current architecture.
+- Keep the baseline as a useful reference point and evidence for the Phase 3 refinement.
+- Evaluate on the full internal test split if runtime allows.
+- Add beam search with length normalization and repetition penalties to reduce generic repeated captions.
+- Consider deeper encoder fine-tuning or a stronger visual backbone after the attention decoder is stable.
+- Keep visual inspection in the modelling notebook because BLEU alone does not capture whether captions are grounded in the image.
