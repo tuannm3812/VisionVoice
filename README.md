@@ -11,7 +11,7 @@ The assignment uses only the official VizWiz-Captions validation set. Inside tha
 | Notebook | Purpose |
 | --- | --- |
 | `notebooks/01_eda_vizwiz.ipynb` | Dataset loading, annotation cleaning, image/caption inspection, leakage-free split, integrity audits, cleaning-impact analysis, vocabulary coverage, and caption-length analysis. |
-| `notebooks/02_individual_models_resnet_lstm_attention.ipynb` | Main assignment submission notebook containing shared preparation, Model 1 baseline, Model 2 attention refinement, and evaluation for both. |
+| `notebooks/02_modeling.ipynb` | Main assignment submission notebook containing shared preparation, Model 1 baseline, Model 2 attention refinement, and evaluation for both. |
 
 ## Project Structure
 
@@ -19,7 +19,7 @@ The assignment uses only the official VizWiz-Captions validation set. Inside tha
 VisionVoice/
 |-- notebooks/
 |   |-- 01_eda_vizwiz.ipynb
-|   `-- 02_individual_models_resnet_lstm_attention.ipynb
+|   `-- 02_modeling.ipynb
 |-- src/
 |   |-- data_loader.py
 |   |-- decoder.py
@@ -41,7 +41,7 @@ Large files such as datasets, trained weights, generated outputs, and Kaggle wor
 4. Enable GPU acceleration.
 5. Run the notebooks in order:
    - `01_eda_vizwiz.ipynb`
-   - `02_individual_models_resnet_lstm_attention.ipynb`
+   - `02_modeling.ipynb`
 
 The notebooks default to this Kaggle dataset path:
 

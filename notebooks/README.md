@@ -11,7 +11,7 @@ Run these notebooks in order when reproducing the Kaggle workflow:
    - Checks vocabulary coverage, validation OOV rate, and sequence truncation risk.
    - Studies vocabulary and caption length distributions.
 
-2. `02_individual_models_resnet_lstm_attention.ipynb`
+2. `02_modeling.ipynb`
    - Recreates the cleaned data pipeline.
    - Trains Model 1: baseline ResNet-50 encoder and LSTM decoder.
    - Trains Model 2: attention-based ResNet-50 plus LSTMCell decoder.
@@ -24,7 +24,7 @@ Each notebook is standalone for Kaggle, so it repeats the setup and data-prepara
 Mode defaults:
 
 - `01_eda_vizwiz.ipynb`: `MODE = "eda"`, `SHOW_EDA_PLOTS = True`, `SHOW_MODEL_PLOTS = False`
-- `02_individual_models_resnet_lstm_attention.ipynb`: `MODE = "train"`, `SHOW_EDA_PLOTS = False`, `SHOW_MODEL_PLOTS = True`
+- `02_modeling.ipynb`: `MODE = "train"`, `SHOW_EDA_PLOTS = False`, `SHOW_MODEL_PLOTS = True`
 
 Clear notebook outputs before pushing Kaggle-run notebooks to GitHub. Static figures and rendered images are saved inside `.ipynb` output cells and can easily make a notebook too large:
 

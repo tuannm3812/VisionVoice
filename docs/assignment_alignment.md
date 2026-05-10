@@ -34,7 +34,7 @@ Primary model:
 
 Model 1 appears in:
 
-- `notebooks/02_individual_models_resnet_lstm_attention.ipynb`
+- `notebooks/02_modeling.ipynb`
 
 Design:
 
@@ -56,7 +56,7 @@ Primary model:
 
 Model 2 appears in:
 
-- `notebooks/02_individual_models_resnet_lstm_attention.ipynb`
+- `notebooks/02_modeling.ipynb`
 
 Design rationale:
 
@@ -77,7 +77,7 @@ Evaluation:
 For assignment submission, use:
 
 ```text
-notebooks/02_individual_models_resnet_lstm_attention.ipynb
+notebooks/02_modeling.ipynb
 ```
 
 This notebook contains:
