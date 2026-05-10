@@ -34,7 +34,6 @@ Primary model:
 
 Model 1 appears in:
 
-- `notebooks/02_baseline_resnet_lstm.ipynb`
 - `notebooks/02_individual_models_resnet_lstm_attention.ipynb`
 
 Design:
@@ -57,7 +56,6 @@ Primary model:
 
 Model 2 appears in:
 
-- `notebooks/03_attention_resnet_lstm.ipynb`
 - `notebooks/02_individual_models_resnet_lstm_attention.ipynb`
 
 Design rationale:
@@ -89,4 +87,4 @@ This notebook contains:
 - Phase 3 discussion/rationale,
 - Model 2 architecture and evaluation.
 
-The split notebooks are kept for easier development and reruns, but the combined notebook best matches the brief's requirement that each student's notebook contain at least two architectures with evaluation for both.
+The repository keeps a single active modelling notebook so the submission is unambiguous and matches the brief's requirement that each student's notebook contain at least two architectures with evaluation for both.

@@ -11,23 +11,13 @@ Run these notebooks in order when reproducing the Kaggle workflow:
    - Checks vocabulary coverage, validation OOV rate, and sequence truncation risk.
    - Studies vocabulary and caption length distributions.
 
-2. `02_baseline_resnet_lstm.ipynb`
+2. `02_individual_models_resnet_lstm_attention.ipynb`
    - Recreates the cleaned data pipeline.
-   - Trains the baseline ResNet-50 encoder and LSTM decoder.
-   - Saves `vision_voice_baseline_best.pth`.
-   - Selects checkpoints on the internal validation split, then evaluates BLEU and sample predictions on the internal test split.
-
-3. `03_attention_resnet_lstm.ipynb`
-   - Recreates the cleaned data pipeline.
-   - Trains the attention-based ResNet-50 plus LSTMCell decoder.
-   - Saves `vision_voice_attention_best.pth`.
-   - Selects checkpoints on the internal validation split, then evaluates BLEU-1 through BLEU-4 and visualizes attention maps on the internal test split.
-
-Assignment submission notebook:
-
-- `02_individual_models_resnet_lstm_attention.ipynb`
-  - Contains the shared data preparation, Model 1 baseline, Model 2 attention refinement, and evaluation for both architectures in one notebook.
-  - Use this notebook when the requirement is that each student's notebook contain at least two architectures.
+   - Trains Model 1: baseline ResNet-50 encoder and LSTM decoder.
+   - Trains Model 2: attention-based ResNet-50 plus LSTMCell decoder.
+   - Selects checkpoints on the internal validation split.
+   - Evaluates both architectures on the internal test split.
+   - Saves `vision_voice_baseline_best.pth`, `vision_voice_attention_best.pth`, and attention metrics JSON artifacts.
 
 Each notebook is standalone for Kaggle, so it repeats the setup and data-preparation cells it needs.
 
@@ -35,8 +25,6 @@ Mode defaults:
 
 - `01_eda_vizwiz.ipynb`: `MODE = "eda"`, `SHOW_EDA_PLOTS = True`, `SHOW_MODEL_PLOTS = False`
 - `02_individual_models_resnet_lstm_attention.ipynb`: `MODE = "train"`, `SHOW_EDA_PLOTS = False`, `SHOW_MODEL_PLOTS = True`
-- `02_baseline_resnet_lstm.ipynb`: `MODE = "train"`, `SHOW_EDA_PLOTS = False`, `SHOW_MODEL_PLOTS = True`
-- `03_attention_resnet_lstm.ipynb`: `MODE = "train"`, `SHOW_EDA_PLOTS = False`, `SHOW_MODEL_PLOTS = True`
 
 Clear notebook outputs before pushing Kaggle-run notebooks to GitHub. Static figures and rendered images are saved inside `.ipynb` output cells and can easily make a notebook too large:
 

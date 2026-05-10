@@ -12,8 +12,6 @@ The assignment uses only the official VizWiz-Captions validation set. Inside tha
 | --- | --- |
 | `notebooks/01_eda_vizwiz.ipynb` | Dataset loading, annotation cleaning, image/caption inspection, leakage-free split, integrity audits, cleaning-impact analysis, vocabulary coverage, and caption-length analysis. |
 | `notebooks/02_individual_models_resnet_lstm_attention.ipynb` | Main assignment submission notebook containing shared preparation, Model 1 baseline, Model 2 attention refinement, and evaluation for both. |
-| `notebooks/02_baseline_resnet_lstm.ipynb` | Baseline CNN encoder plus LSTM decoder training, validation loss tracking, BLEU evaluation, and qualitative caption inspection. |
-| `notebooks/03_attention_resnet_lstm.ipynb` | Spatial ResNet encoder, attention decoder, two-tier optimizer, BLEU evaluation, and attention heatmap visualization. |
 
 ## Project Structure
 
@@ -21,9 +19,7 @@ The assignment uses only the official VizWiz-Captions validation set. Inside tha
 VisionVoice/
 |-- notebooks/
 |   |-- 01_eda_vizwiz.ipynb
-|   |-- 02_individual_models_resnet_lstm_attention.ipynb
-|   |-- 02_baseline_resnet_lstm.ipynb
-|   `-- 03_attention_resnet_lstm.ipynb
+|   `-- 02_individual_models_resnet_lstm_attention.ipynb
 |-- src/
 |   |-- data_loader.py
 |   |-- decoder.py
@@ -45,8 +41,7 @@ Large files such as datasets, trained weights, generated outputs, and Kaggle wor
 4. Enable GPU acceleration.
 5. Run the notebooks in order:
    - `01_eda_vizwiz.ipynb`
-   - `02_baseline_resnet_lstm.ipynb`
-   - `03_attention_resnet_lstm.ipynb`
+   - `02_individual_models_resnet_lstm_attention.ipynb`
 
 The notebooks default to this Kaggle dataset path:
 
