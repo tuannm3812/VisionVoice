@@ -105,12 +105,16 @@ Additional limitations include:
 
 ## 9. Recommendations
 
-The attention model should be treated as the stronger architecture for the current submission because it improves all BLEU scores and directly addresses the baseline's weak visual grounding. Future improvements should focus on decoding and visual representation:
+The attention model should be treated as the stronger architecture for the current submission because it improves all BLEU scores and directly addresses the baseline's weak visual grounding. The project should keep ResNet-50 as the selected visual backbone, because this was the architecture choice communicated to the group and both submitted models are already built around it.
 
-- Evaluate on the full internal test split if Kaggle runtime allows.
-- Add beam search with length normalization and repetition penalties.
-- Fine-tune deeper ResNet layers after the decoder stabilizes.
-- Consider stronger image encoders such as EfficientNet or Vision Transformer variants if allowed by runtime.
+The recommended next step is not to create a separate modelling notebook. The assignment asks each student to submit one modelling notebook containing at least two architectures with evaluation for both, so the current `02_modeling.ipynb` structure remains appropriate. Any final refinements should be made inside that notebook so the submission stays clear and easy to assess.
+
+Recommended refinements:
+
+- Evaluate both models on the full internal test split rather than a 500-image sample, since Kaggle runtime is not currently a constraint.
+- Keep Model 1 as the frozen ResNet-50 plus LSTM baseline.
+- Keep Model 2 as the refined ResNet-50 attention model, with spatial features and partial encoder fine-tuning.
+- Use beam search with length normalization and repetition penalties as an additional decoding experiment for Model 2, while keeping greedy decoding results for fair comparison with the current run.
 - Report qualitative examples alongside BLEU to show whether generated captions are visually grounded.
 
 ## 10. Contribution Statement

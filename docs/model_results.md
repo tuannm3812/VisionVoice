@@ -135,7 +135,8 @@ The baseline has slightly lower final validation loss, but the attention model h
 
 - Treat the attention model as the stronger current architecture.
 - Keep the baseline as a useful reference point and evidence for the Phase 3 refinement.
-- Evaluate on the full internal test split if runtime allows.
-- Add beam search with length normalization and repetition penalties to reduce generic repeated captions.
-- Consider deeper encoder fine-tuning or a stronger visual backbone after the attention decoder is stable.
+- Keep ResNet-50 as the selected backbone for both architectures, because it is the chosen design communicated to the group.
+- Keep all modelling work in `notebooks/02_modeling.ipynb` rather than creating a third notebook.
+- Evaluate on the full internal test split now that Kaggle runtime is not a constraint.
+- Add beam search with length normalization and repetition penalties as a Model 2 decoding experiment to reduce generic repeated captions.
 - Keep visual inspection in the modelling notebook because BLEU alone does not capture whether captions are grounded in the image.

@@ -88,3 +88,9 @@ This notebook contains:
 - Model 2 architecture and evaluation.
 
 The repository keeps a single active modelling notebook so the submission is unambiguous and matches the brief's requirement that each student's notebook contain at least two architectures with evaluation for both.
+
+Recommended final refinement:
+
+- Keep ResNet-50 as the selected backbone in both individual architectures.
+- Keep final model improvements inside `notebooks/02_modeling.ipynb` instead of creating another modelling notebook.
+- Refresh BLEU reporting on the full internal test split and document greedy versus beam-search decoding for the attention model.
