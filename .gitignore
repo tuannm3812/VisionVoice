@@ -31,5 +31,6 @@ Thumbs.db
 
 # Results and logs
 results/
+dist/
 *.log
 kaggle/working/

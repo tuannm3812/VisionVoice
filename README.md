@@ -153,3 +153,9 @@ Assignment phase mapping is documented in:
 ```text
 docs/assignment_alignment.md
 ```
+
+Cloud handoff and packaging notes are documented in:
+
+```text
+docs/cloud_workflow.md
+```
