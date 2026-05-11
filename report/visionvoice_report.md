@@ -34,7 +34,7 @@ The first architecture is a conventional encoder-decoder captioning model. A pre
 | Decoder | LSTM language decoder |
 | Loss | Cross-entropy with padding ignored |
 | Optimizer | Adam, learning rate 0.0001 |
-| Decoding | Greedy decoding |
+| Decoding | Greedy decoding and beam-search decoding |
 | Total parameters | 30,561,639 |
 | Trainable parameters | 7,053,607 |
 | Frozen parameters | 23,508,032 |
@@ -70,15 +70,15 @@ The baseline achieved a slightly lower validation loss. However, token-level cro
 
 ## 6. Evaluation Metrics
 
-The previous completed notebook run evaluated both models on 500 sampled images from the internal test split using BLEU-1 through BLEU-4. The notebook is now configured to refresh these metrics on the full internal test split before final submission.
+The final notebook run evaluated both models on all **755 images** in the internal test split using BLEU-1 through BLEU-4. The attention model was evaluated with both greedy decoding and beam-search decoding.
 
-| Model | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 |
-| --- | ---: | ---: | ---: | ---: |
-| Baseline ResNet-LSTM | 0.5722 | 0.2712 | 0.1329 | 0.0670 |
-| Attention ResNet-LSTM | 0.6159 | 0.3970 | 0.2502 | 0.1552 |
-| Absolute improvement | +0.0437 | +0.1258 | +0.1173 | +0.0882 |
+| Model | Decoding | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Baseline ResNet-LSTM | Greedy | 0.5740 | 0.2692 | 0.1281 | 0.0645 |
+| Attention ResNet-LSTM | Greedy | 0.6129 | 0.3960 | 0.2519 | 0.1593 |
+| Attention ResNet-LSTM | Beam search | 0.6640 | 0.4373 | 0.2897 | 0.1935 |
 
-The attention model improves every BLEU metric. The largest practical improvement is at BLEU-4, where the score increases from 0.0670 to 0.1552. This suggests that attention improves phrase-level caption quality, not only individual word overlap.
+The attention model improves every BLEU metric over the baseline. Beam search gives the strongest quantitative result, increasing BLEU-4 from the baseline's 0.0645 to 0.1935. This suggests that spatial attention improves phrase-level caption quality, and that decoding strategy also has a meaningful effect on final caption quality.
 
 ## 7. Qualitative Analysis
 
@@ -88,9 +88,9 @@ The baseline model showed a clear template-collapse problem during visual inspec
 A white and black box of coffee is on a table ..
 ```
 
-This prediction was produced for a 7-Up bottle, a dog, and floral fabric. The repeated caption indicates that the baseline decoder learned a strong language prior but did not reliably ground its output in the image.
+This prediction was produced for unrelated examples including floral fabric, a text-heavy document, and a computer pop-up. The repeated caption indicates that the baseline decoder learned a strong language prior but did not reliably ground its output in the image.
 
-The attention model produced more image-specific outputs, but it was still imperfect. For an image of a person's lap in jeans, it predicted a person wearing a blue shirt; this partially captured the human/clothing context but missed the main scene. For an office-chair image, it identified a chair but repeated words and missed some visual details. These examples show that attention improves grounding but does not fully solve repetition, object specificity, or fine-grained visual reasoning.
+The attention model produced stronger BLEU scores, but qualitative inspection still showed visible errors. One inspected near-black image was captioned with repeated "dark/light" wording, and another image containing a clock and pill container was described as a green-and-white food box. These examples show that attention improves sequence-level overlap, and beam search strengthens the corpus-level scores further, but the system still does not fully solve repetition, object specificity, or fine-grained visual reasoning.
 
 ## 8. Limitations and Remaining Issues
 
@@ -98,23 +98,22 @@ The main limitation is that both models are relatively small captioning systems 
 
 Additional limitations include:
 
-- Evaluation is based on a 500-image sample from the internal test split rather than the full internal test split.
+- Evaluation is now based on the full internal test split, but this split is still internally derived from the official VizWiz validation set rather than an external held-out benchmark.
 - BLEU rewards n-gram overlap but does not fully measure semantic correctness or accessibility usefulness.
 - The attention model still repeats phrases and sometimes attends to broadly relevant regions without naming the correct object.
 - The report currently summarizes one student's modelling notebook; the final group submission should add each teammate's architectures, results, and contribution statement.
 
 ## 9. Recommendations
 
-The attention model should be treated as the stronger architecture for the current submission because it improves all BLEU scores and directly addresses the baseline's weak visual grounding. The project should keep ResNet-50 as the selected visual backbone, because this was the architecture choice communicated to the group and both submitted models are already built around it.
+The attention model with beam search should be treated as the strongest result for the current submission because it improves all BLEU scores and directly addresses the baseline's weak visual grounding. The project should keep ResNet-50 as the selected visual backbone, because this was the architecture choice communicated to the group and both submitted models are already built around it.
 
 The recommended next step is not to create a separate modelling notebook. The assignment asks each student to submit one modelling notebook containing at least two architectures with evaluation for both, so the current `02_modeling.ipynb` structure remains appropriate. Any final refinements should be made inside that notebook so the submission stays clear and easy to assess.
 
-Recommended refinements:
+Recommended next steps:
 
-- Evaluate both models on the full internal test split rather than a 500-image sample, since Kaggle runtime is not currently a constraint.
 - Keep Model 1 as the frozen ResNet-50 plus LSTM baseline.
 - Keep Model 2 as the refined ResNet-50 attention model, with spatial features and partial encoder fine-tuning.
-- Use beam search with length normalization and repetition penalties as an additional decoding experiment for Model 2, while keeping greedy decoding results for fair comparison with the current run.
+- Present beam search as an inference-time refinement for Model 2, while keeping greedy decoding results for fair comparison.
 - Report qualitative examples alongside BLEU to show whether generated captions are visually grounded.
 
 ## 10. Contribution Statement

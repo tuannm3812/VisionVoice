@@ -51,35 +51,30 @@ Do not create a third modelling notebook unless the user explicitly asks.
 
 ## Latest Notebook Setup
 
-`notebooks/02_modeling.ipynb` has been prepared for the final Kaggle rerun:
+`notebooks/02_modeling.ipynb` has been rerun on Kaggle:
 
-- `BLEU_EVAL_SAMPLES = None`, so evaluation uses the full internal test split.
-- `EVALUATE_BEAM_SEARCH = True`, so Model 2 reports greedy and beam-search decoding.
+- Evaluation uses the full internal test split.
+- Model 2 reports both greedy and beam-search decoding.
 - Baseline metrics save to `baseline_metrics_greedy.json`.
 - Attention metrics save to `attention_metrics_greedy.json` and `attention_metrics_beam.json`.
-- Old outputs were cleared because evaluation logic changed.
+- Notebook outputs are kept for final assignment evidence.
 
-The user is currently running the notebook on Kaggle. After the run finishes, update:
+## Current Completed Results
 
-- `README.md`
-- `docs/model_results.md`
-- `report/visionvoice_report.md`
+Full internal test split evaluation:
 
-with the final full-test BLEU values and qualitative findings.
-
-## Previous Completed Results
-
-Previous 500-sample internal test evaluation:
-
-| Model | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 |
-| --- | ---: | ---: | ---: | ---: |
-| Baseline ResNet-LSTM | 0.5722 | 0.2712 | 0.1329 | 0.0670 |
-| Attention ResNet-LSTM greedy | 0.6159 | 0.3970 | 0.2502 | 0.1552 |
+| Model | Decoding | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 |
+| --- | --- | ---: | ---: | ---: | ---: |
+| Baseline ResNet-LSTM | Greedy | 0.5740 | 0.2692 | 0.1281 | 0.0645 |
+| Attention ResNet-LSTM | Greedy | 0.6129 | 0.3960 | 0.2519 | 0.1593 |
+| Attention ResNet-LSTM | Beam search | 0.6640 | 0.4373 | 0.2897 | 0.1935 |
 
 Interpretation:
 
 - Baseline trains stably but collapses to repeated generic captions in visual inspection.
-- Attention improves all BLEU scores and gives better visual grounding, but still has repetition and object-detail errors.
+- Attention improves all BLEU scores.
+- Beam search gives the strongest quantitative result.
+- Visual inspection still shows repetition and object-detail errors.
 
 ## Important Kaggle Paths
 
@@ -114,5 +109,5 @@ Kaggle outputs:
 ## Suggested Cloud Codex Prompt
 
 ```text
-I am continuing the VisionVoice image-captioning assignment. Please read docs/codex_cloud_handoff.md first, then inspect the current repository state. The Kaggle notebook has been rerun or is being rerun. Help me update README.md, docs/model_results.md, and report/visionvoice_report.md with the final full-test BLEU metrics and qualitative findings. Keep the ResNet-50 architecture decision and keep one modelling notebook.
+I am continuing the VisionVoice image-captioning assignment. Please read docs/codex_cloud_handoff.md first, then inspect the current repository state. Keep the ResNet-50 architecture decision and keep one modelling notebook. Help polish the final report and submission materials using the full-test BLEU metrics already documented in the repo.
 ```

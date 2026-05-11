@@ -6,16 +6,17 @@ The Kaggle workflow is organized around two rerunnable notebooks: one shared EDA
 
 The assignment uses only the official VizWiz-Captions validation set. Inside that source dataset, the notebooks create internal image-level train/validation/test splits for model training, checkpoint selection, and final reporting.
 
-## Previous Completed Results
+## Current Results
 
-The previous completed Kaggle run evaluated both models on 500 sampled images from the internal test split. The modelling notebook is now configured to rerun BLEU on the full internal test split and to report both greedy and beam-search decoding for the attention model.
+The latest Kaggle run evaluated all 755 images in the internal test split. The attention model is reported with both greedy decoding and beam-search decoding.
 
 | Model | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 | Key takeaway |
 | --- | ---: | ---: | ---: | ---: | --- |
-| Baseline ResNet-LSTM | 0.5722 | 0.2712 | 0.1329 | 0.0670 | Trains stably but collapses to repeated generic captions in visual inspection. |
-| Attention ResNet-LSTM | 0.6159 | 0.3970 | 0.2502 | 0.1552 | Improves all BLEU scores and produces more image-specific captions, though repetition remains. |
+| Baseline ResNet-LSTM | 0.5740 | 0.2692 | 0.1281 | 0.0645 | Trains stably but collapses to repeated generic captions in visual inspection. |
+| Attention ResNet-LSTM, greedy | 0.6129 | 0.3960 | 0.2519 | 0.1593 | Improves all BLEU scores and gives better phrase-level overlap than the baseline. |
+| Attention ResNet-LSTM, beam | 0.6640 | 0.4373 | 0.2897 | 0.1935 | Best quantitative result; beam search improves every BLEU score over greedy decoding. |
 
-The attention model is the stronger current result because it substantially improves phrase-level overlap, especially BLEU-4, and directly addresses the baseline's weak visual grounding.
+The attention model with beam search is the strongest current result because it substantially improves phrase-level overlap, especially BLEU-4, and directly addresses the baseline's weak visual grounding.
 
 ## Notebooks
 

@@ -93,4 +93,5 @@ Recommended final refinement:
 
 - Keep ResNet-50 as the selected backbone in both individual architectures.
 - Keep final model improvements inside `notebooks/02_modeling.ipynb` instead of creating another modelling notebook.
-- Refresh BLEU reporting on the full internal test split and document greedy versus beam-search decoding for the attention model.
+- BLEU reporting has been refreshed on the full internal test split.
+- The attention model documents both greedy and beam-search decoding, with beam search producing the strongest BLEU scores.

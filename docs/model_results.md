@@ -1,6 +1,6 @@
 # VisionVoice Model Results
 
-This document summarizes the previous completed Kaggle outputs from `notebooks/02_modeling.ipynb`. The notebook has since been configured to rerun evaluation on the full internal test split and to add beam-search reporting for the attention model.
+This document summarizes the completed Kaggle outputs from `notebooks/02_modeling.ipynb`.
 
 ## Run Setup
 
@@ -12,7 +12,7 @@ This document summarizes the previous completed Kaggle outputs from `notebooks/0
 | Device | CUDA |
 | Source dataset | Official VizWiz-Captions validation set |
 | Dataset path | `/kaggle/input/datasets/tuannm3823/vizwiz` |
-| Evaluation sample | 500 images from the internal test split |
+| Evaluation sample | Full internal test split: 755 images |
 
 The project uses only the official VizWiz validation set. The notebook creates internal image-level splits for training, checkpoint selection, and final reporting.
 
@@ -68,10 +68,10 @@ BLEU results:
 
 | Metric | Score |
 | --- | ---: |
-| BLEU-1 | 0.5722 |
-| BLEU-2 | 0.2712 |
-| BLEU-3 | 0.1329 |
-| BLEU-4 | 0.0670 |
+| BLEU-1 | 0.5740 |
+| BLEU-2 | 0.2692 |
+| BLEU-3 | 0.1281 |
+| BLEU-4 | 0.0645 |
 
 Qualitative finding:
 
@@ -81,7 +81,7 @@ The baseline repeatedly generated the same caption for unrelated images:
 A white and black box of coffee is on a table ..
 ```
 
-This occurred for a 7-Up bottle, a dog, and floral fabric. The model learned a plausible language template but did not ground the caption reliably in the image.
+This occurred for unrelated examples including floral fabric, a text-heavy document, and a computer pop-up. The model learned a plausible language template but did not ground the caption reliably in the image.
 
 ## Attention ResNet-LSTM
 
@@ -91,7 +91,7 @@ Architecture:
 - Bahdanau-style additive attention over image regions.
 - LSTMCell decoder conditioned on the attended visual context.
 - Decoder learning rate of `1e-4` and encoder fine-tuning learning rate of `1e-5`.
-- Greedy decoding, with attention heatmaps for inspection.
+- Greedy decoding and beam-search decoding, with attention heatmaps for inspection.
 
 Training history:
 
@@ -110,33 +110,31 @@ Training history:
 
 BLEU results:
 
-| Metric | Score |
-| --- | ---: |
-| BLEU-1 | 0.6159 |
-| BLEU-2 | 0.3970 |
-| BLEU-3 | 0.2502 |
-| BLEU-4 | 0.1552 |
+| Decoding | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 |
+| --- | ---: | ---: | ---: | ---: |
+| Greedy | 0.6129 | 0.3960 | 0.2519 | 0.1593 |
+| Beam search | 0.6640 | 0.4373 | 0.2897 | 0.1935 |
 
 Qualitative finding:
 
-The attention model produced more image-specific captions than the baseline, but it still made visible errors. It partially captured clothing/person context in one example and correctly identified chairs in another, while still showing repetition and occasional object-detail mistakes.
+The attention model produced stronger corpus-level scores than the baseline, but visual inspection still showed visible errors. One inspected image of near-black glare was captioned as repeated "dark/light" wording, and another image containing a clock and pill container was described as a green-and-white food box. These examples show that attention improves sequence-level overlap but does not fully solve object specificity or repetition.
 
 ## Comparison
 
-| Model | Final train loss | Final validation loss | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 |
-| --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| Baseline ResNet-LSTM | 3.1877 | 3.4259 | 0.5722 | 0.2712 | 0.1329 | 0.0670 |
-| Attention ResNet-LSTM | 3.1958 | 3.4695 | 0.6159 | 0.3970 | 0.2502 | 0.1552 |
-| Difference (attention - baseline) | +0.0081 | +0.0436 | +0.0437 | +0.1258 | +0.1173 | +0.0882 |
+| Model | Final train loss | Final validation loss | Decoding | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 |
+| --- | ---: | ---: | --- | ---: | ---: | ---: | ---: |
+| Baseline ResNet-LSTM | 3.1877 | 3.4259 | Greedy | 0.5740 | 0.2692 | 0.1281 | 0.0645 |
+| Attention ResNet-LSTM | 3.1958 | 3.4695 | Greedy | 0.6129 | 0.3960 | 0.2519 | 0.1593 |
+| Attention ResNet-LSTM | 3.1958 | 3.4695 | Beam search | 0.6640 | 0.4373 | 0.2897 | 0.1935 |
 
-The baseline has slightly lower final validation loss, but the attention model has better BLEU scores across all n-gram levels. This matters because validation loss is token-level, while BLEU better reflects sequence-level caption overlap with references. The BLEU-4 improvement is especially important because it suggests stronger phrase-level caption quality.
+The baseline has slightly lower final validation loss, but the attention model has better BLEU scores across all n-gram levels. This matters because validation loss is token-level, while BLEU better reflects sequence-level caption overlap with references. Beam search further improves the attention model, raising BLEU-4 from 0.1593 to 0.1935.
 
 ## Recommendations
 
-- Treat the attention model as the stronger current architecture.
+- Treat the attention model with beam search as the strongest current result.
 - Keep the baseline as a useful reference point and evidence for the Phase 3 refinement.
 - Keep ResNet-50 as the selected backbone for both architectures, because it is the chosen design communicated to the group.
 - Keep all modelling work in `notebooks/02_modeling.ipynb` rather than creating a third notebook.
-- Evaluate on the full internal test split now that Kaggle runtime is not a constraint.
-- Add beam search with length normalization and repetition penalties as a Model 2 decoding experiment to reduce generic repeated captions.
+- Keep full internal test split reporting in the final submission.
+- Discuss beam search as an inference-time refinement rather than a separate architecture.
 - Keep visual inspection in the modelling notebook because BLEU alone does not capture whether captions are grounded in the image.
