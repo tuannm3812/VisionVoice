@@ -158,4 +158,5 @@ Cloud handoff and packaging notes are documented in:
 
 ```text
 docs/cloud_workflow.md
+docs/codex_cloud_handoff.md
 ```
