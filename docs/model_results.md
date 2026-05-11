@@ -1,6 +1,6 @@
 # VisionVoice Model Results
 
-This document summarizes the executed Kaggle outputs currently stored in `notebooks/02_modeling.ipynb`.
+This document summarizes the previous completed Kaggle outputs from `notebooks/02_modeling.ipynb`. The notebook has since been configured to rerun evaluation on the full internal test split and to add beam-search reporting for the attention model.
 
 ## Run Setup
 

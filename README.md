@@ -6,9 +6,9 @@ The Kaggle workflow is organized around two rerunnable notebooks: one shared EDA
 
 The assignment uses only the official VizWiz-Captions validation set. Inside that source dataset, the notebooks create internal image-level train/validation/test splits for model training, checkpoint selection, and final reporting.
 
-## Current Results
+## Previous Completed Results
 
-The latest Kaggle run in `notebooks/02_modeling.ipynb` evaluates both models on 500 sampled images from the internal test split.
+The previous completed Kaggle run evaluated both models on 500 sampled images from the internal test split. The modelling notebook is now configured to rerun BLEU on the full internal test split and to report both greedy and beam-search decoding for the attention model.
 
 | Model | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 | Key takeaway |
 | --- | ---: | ---: | ---: | ---: | --- |

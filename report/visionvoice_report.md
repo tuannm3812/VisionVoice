@@ -70,7 +70,7 @@ The baseline achieved a slightly lower validation loss. However, token-level cro
 
 ## 6. Evaluation Metrics
 
-The notebook evaluates both models on 500 sampled images from the internal test split using BLEU-1 through BLEU-4.
+The previous completed notebook run evaluated both models on 500 sampled images from the internal test split using BLEU-1 through BLEU-4. The notebook is now configured to refresh these metrics on the full internal test split before final submission.
 
 | Model | BLEU-1 | BLEU-2 | BLEU-3 | BLEU-4 |
 | --- | ---: | ---: | ---: | ---: |
